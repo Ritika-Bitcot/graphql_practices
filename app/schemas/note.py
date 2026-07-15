@@ -142,7 +142,7 @@ class NoteResponse(NoteBase):
     
     class Config:
         """Pydantic configuration."""
-        from_attributes = True
+        orm_mode = True
         json_encoders = {
             datetime: lambda v: v.isoformat()
         }
