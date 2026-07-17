@@ -65,6 +65,16 @@ class NoteService:
             logger.error(f"Error getting note by ID {note_id}: {str(e)}")
             raise
     
+    def _validate_pagination(self, skip: int, limit: int) -> None:
+        """
+        Validate pagination parameters.
+        Raises ValueError if parameters are invalid.
+        """
+        if skip < 0:
+            raise ValueError("Skip parameter must be non-negative")
+        if limit < 1 or limit > 100:
+            raise ValueError("Limit parameter must be between 1 and 100")
+    
     def get_all(self, skip: int = 0, limit: int = 10) -> List[Note]:
         """
         Get all notes with pagination.
@@ -75,22 +85,17 @@ class NoteService:
             
         Returns:
             List[Note]: List of notes
-            
+        
         Raises:
             ValueError: If pagination parameters are invalid
         """
+        self._validate_pagination(skip, limit)
+
         try:
-            if skip < 0:
-                raise ValueError("Skip parameter must be non-negative")
-            if limit < 1 or limit > 100:
-                raise ValueError("Limit parameter must be between 1 and 100")
-            
             return self.db.query(Note).filter(
                 Note.is_active == True
             ).offset(skip).limit(limit).all()
-            
-        except ValueError:
-            raise
+
         except Exception as e:
             logger.error(f"Error getting all notes: {str(e)}")
             raise
@@ -110,16 +115,13 @@ class NoteService:
         Raises:
             ValueError: If search parameters are invalid
         """
+        if not query or not query.strip():
+            raise ValueError("Search query cannot be empty")
+        self._validate_pagination(skip, limit)
+
+        search_term = f"%{query.strip()}%"
+
         try:
-            if not query or not query.strip():
-                raise ValueError("Search query cannot be empty")
-            if skip < 0:
-                raise ValueError("Skip parameter must be non-negative")
-            if limit < 1 or limit > 100:
-                raise ValueError("Limit parameter must be between 1 and 100")
-            
-            search_term = f"%{query.strip()}%"
-            
             return self.db.query(Note).filter(
                 Note.is_active == True,
                 or_(
@@ -127,9 +129,7 @@ class NoteService:
                     Note.content.ilike(search_term)
                 )
             ).offset(skip).limit(limit).all()
-            
-        except ValueError:
-            raise
+
         except Exception as e:
             logger.error(f"Error searching notes: {str(e)}")
             raise
