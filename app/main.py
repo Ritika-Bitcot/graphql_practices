@@ -130,13 +130,14 @@ async def root() -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: Application information
     """
+    graphql_doc = "/graphql" if settings.graphql_debug else "GraphQL IDE disabled in production"
     return {
         "message": f"Welcome to {settings.app_name}",
         "version": settings.app_version,
         "graphql_endpoint": "/graphql",
         "health_check": "/health",
         "documentation": {
-            "graphql": "/graphql" if settings.graphql_debug else "GraphQL IDE disabled in production"
+            "graphql": graphql_doc
         }
     }
 
