@@ -8,7 +8,7 @@ with GraphQL support following SOLID principles.
 import logging
 from contextlib import asynccontextmanager
 from typing import Dict, Any
-
+from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from strawberry.fastapi import GraphQLRouter
@@ -169,7 +169,7 @@ async def log_requests(request: Request, call_next) -> Response:
 
 # Exception handlers
 @app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception) -> Dict[str, Any]:
+async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """
     Global exception handler.
     
@@ -178,15 +178,18 @@ async def global_exception_handler(request: Request, exc: Exception) -> Dict[str
         exc: Exception that occurred
         
     Returns:
-        Dict[str, Any]: Error response
+        JSONResponse: Error response with status code
     """
     logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
     
-    return {
-        "error": "Internal server error",
-        "message": "An unexpected error occurred",
-        "type": type(exc).__name__ if settings.debug else None
-    }
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal server error",
+            "message": "An unexpected error occurred",
+            "type": type(exc).__name__ if settings.debug else None
+        }
+    )
 
 
 # Run the application
