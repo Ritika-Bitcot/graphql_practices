@@ -182,11 +182,18 @@ class NoteMutationResolver:
                     deleted_id=None
                 )
                 
-        except Exception as e:
-            logger.error(f"Error deleting note: {str(e)}")
+        except RuntimeError as e:
+            logger.error(f"Runtime error deleting note: {str(e)}")
             return DeleteResponse(
                 success=False,
-                message=f"Error deleting note: {str(e)}",
+                message=f"Runtime error: {str(e)}",
+                deleted_id=None
+            )
+        except Exception as e:
+            logger.error(f"Unhandled error deleting note: {str(e)}")
+            return DeleteResponse(
+                success=False,
+                message="An unexpected error occurred",
                 deleted_id=None
             )
 
@@ -212,14 +219,19 @@ class Mutation:
         Returns:
             NoteResponse: Response containing created note or error message
         """
-        # Get database session
-        db_gen = get_db()
-        db = next(db_gen)
-        try:
+    async def create_note(self, note_input: NoteCreateInput) -> NoteResponse:
+        """
+        Create a new note.
+        
+        Args:
+            note_input: Note creation data
+            
+        Returns:
+            NoteResponse: Response containing created note or error message
+        """
+        async with get_db() as db:
             resolver = NoteMutationResolver(db)
             return await resolver.create_note(note_input)
-        finally:
-            db.close()
     
     @field
     async def update_note(self, note_input: NoteUpdateInput) -> NoteResponse:
@@ -235,16 +247,9 @@ class Mutation:
         # Get database session
         db_gen = get_db()
         db = next(db_gen)
-        try:
-            resolver = NoteMutationResolver(db)
-            return await resolver.update_note(note_input)
-        finally:
-            db.close()
-    
-    @field
     async def delete_note(self, delete_input: NoteDeleteInput) -> DeleteResponse:
         """
-        Delete a note (soft delete).
+        Delete a note permanently.
         
         Args:
             delete_input: Note deletion data
@@ -252,11 +257,19 @@ class Mutation:
         Returns:
             DeleteResponse: Response containing deletion result or error message
         """
-        # Get database session
-        db_gen = get_db()
-        db = next(db_gen)
-        try:
+        async with get_db() as db:
             resolver = NoteMutationResolver(db)
-            return await resolver.delete_note(delete_input)
-        finally:
-            db.close()
+    @field
+    async def update_note(self, note_input: NoteUpdateInput) -> NoteResponse:
+        """
+        Update an existing note.
+        
+        Args:
+            note_input: Note update data
+            
+        Returns:
+            NoteResponse: Response containing updated note or error message
+        """
+        async with get_db() as db:
+            resolver = NoteMutationResolver(db)
+            return await resolver.update_note(note_input)
