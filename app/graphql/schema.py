@@ -25,8 +25,8 @@ class Schema:
 
 # Create the complete schema
 schema = strawberry.Schema(
-    query=Query,
-    mutation=Mutation,
+    query=Schema.query,
+    mutation=Schema.mutation,
     config=strawberry.SchemaConfig(
         auto_camel_case=True,
         validation_enabled=True
