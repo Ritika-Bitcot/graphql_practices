@@ -71,6 +71,7 @@ class NoteDeleteInput:
 
 
 @strawberry.input
+@strawberry.input
 class NoteSearchInput:
     """
     GraphQL input type for searching notes.
@@ -80,14 +81,7 @@ class NoteSearchInput:
     """
     
     query: str = strawberry.field(description="Search query string to match title or content")
-    skip: int = strawberry.field(
-        default=0,
-        description="Number of records to skip for pagination"
-    )
-    limit: int = strawberry.field(
-        default=10,
-        description="Maximum number of records to return"
-    )
+    pagination: "NotePaginationInput" = strawberry.field(description="Pagination parameters for the search results")
 
 
 @strawberry.input
