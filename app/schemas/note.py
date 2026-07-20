@@ -67,15 +67,8 @@ class NoteBase(BaseModel):
         return v.strip()
 
 
-class NoteCreate(NoteBase):
-    """
-    Schema for creating a new note.
-    
-    This class is used for note creation requests.
-    """
-    
-    pass
-
+# Removed NoteCreate class as it is redundant with NoteBase for creation schema
+# Use NoteBase directly for note creation requests
 
 class NoteUpdate(BaseModel):
     """
