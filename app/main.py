@@ -155,13 +155,16 @@ async def log_requests(request: Request, call_next) -> Response:
         Response: HTTP response
     """
     # Log request
-    logger.info(f"Request: {request.method} {request.url}")
+    # Log request only if level is DEBUG
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug(f"Request: {request.method} {request.url}")
     
     # Process request
     response = await call_next(request)
     
-    # Log response
-    logger.info(f"Response: {response.status_code}")
+    # Log response only if level is DEBUG
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug(f"Response: {response.status_code}")
     
     return response
 
