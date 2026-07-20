@@ -71,7 +71,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
+    allow_origins=["https://trusteddomain.com"],  # Restrict to trusted domains in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -155,13 +155,16 @@ async def log_requests(request: Request, call_next) -> Response:
         Response: HTTP response
     """
     # Log request
-    logger.info(f"Request: {request.method} {request.url}")
+    # Log request only if level is DEBUG
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug(f"Request: {request.method} {request.url}")
     
     # Process request
     response = await call_next(request)
     
-    # Log response
-    logger.info(f"Response: {response.status_code}")
+    # Log response only if level is DEBUG
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug(f"Response: {response.status_code}")
     
     return response
 
@@ -180,12 +183,17 @@ async def global_exception_handler(request: Request, exc: Exception) -> Dict[str
         Dict[str, Any]: Error response
     """
     logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
-    
-    return {
-        "error": "Internal server error",
-        "message": "An unexpected error occurred",
-        "type": type(exc).__name__ if settings.debug else None
-    }
+
+    from fastapi.responses import JSONResponse
+
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal server error",
+            "message": "An unexpected error occurred",
+            "type": type(exc).__name__ if settings.debug else None
+        }
+    )
 
 
 # Run the application

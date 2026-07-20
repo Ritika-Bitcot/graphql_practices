@@ -18,7 +18,7 @@ class NoteType:
     This class defines the GraphQL representation of a note
     with proper field definitions and descriptions.
     """
-    
+    content: str = strawberry.field(description="Content of the note", default_factory=str)
     id: int = strawberry.field(description="Unique identifier of the note")
     title: str = strawberry.field(description="Title of the note")
     content: str = strawberry.field(description="Content of the note")
@@ -43,7 +43,7 @@ class NoteCreateInput:
 class NoteUpdateInput:
     """
     GraphQL input type for updating a note.
-    
+    content: Optional[str] = strawberry.field(default=None, description="Updated content of the note")
     This class defines the input structure for note updates
     with optional fields for partial updates.
     """

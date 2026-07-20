@@ -135,7 +135,6 @@ class NoteMutationResolver:
                     message=f"Note with ID {note_input.id} not found",
                     note=None
                 )
-                
         except ValueError as e:
             logger.error(f"Validation error updating note: {str(e)}")
             return NoteResponse(
@@ -150,14 +149,12 @@ class NoteMutationResolver:
                 message=f"Error updating note: {str(e)}",
                 note=None
             )
-    
     async def delete_note(self, delete_input: NoteDeleteInput) -> DeleteResponse:
         """
         Delete a note permanently.
         
         Args:
             delete_input: Note deletion data
-            
         Returns:
             DeleteResponse: Response containing deletion result or error message
         """
@@ -213,13 +210,9 @@ class Mutation:
             NoteResponse: Response containing created note or error message
         """
         # Get database session
-        db_gen = get_db()
-        db = next(db_gen)
-        try:
+        with get_db() as db:
             resolver = NoteMutationResolver(db)
             return await resolver.create_note(note_input)
-        finally:
-            db.close()
     
     @field
     async def update_note(self, note_input: NoteUpdateInput) -> NoteResponse:
@@ -235,14 +228,9 @@ class Mutation:
         # Get database session
         db_gen = get_db()
         db = next(db_gen)
-        try:
+        async with get_db() as db:
             resolver = NoteMutationResolver(db)
             return await resolver.update_note(note_input)
-        finally:
-            db.close()
-    
-    @field
-    async def delete_note(self, delete_input: NoteDeleteInput) -> DeleteResponse:
         """
         Delete a note (soft delete).
         
