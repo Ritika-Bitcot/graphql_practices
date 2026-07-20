@@ -19,10 +19,8 @@ from app.core.database import create_tables
 from app.graphql.schema import get_schema
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO if not settings.debug else logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+# Removed module-level logging configuration to avoid conflicts in larger systems
+# Recommend configuring logging in the application's entry point or a dedicated config module
 logger = logging.getLogger(__name__)
 
 
