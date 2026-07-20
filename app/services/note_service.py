@@ -23,7 +23,6 @@ class NoteService:
     This class handles all business operations for notes
     following the Single Responsibility Principle.
     """
-    
     def __init__(self, db: Session) -> None:
         """
         Initialize note service.
