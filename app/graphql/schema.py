@@ -21,12 +21,3 @@ schema = strawberry.Schema(
     )
 )
 
-
-def get_schema() -> strawberry.Schema:
-    """
-    Get the GraphQL schema.
-    
-    Returns:
-        strawberry.Schema: The complete GraphQL schema
-    """
-    return schema
