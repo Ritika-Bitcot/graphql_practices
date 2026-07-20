@@ -67,15 +67,8 @@ class NoteBase(BaseModel):
         return v.strip()
 
 
-class NoteCreate(NoteBase):
-    """
-    Schema for creating a new note.
-    
-    This class is used for note creation requests.
-    """
-    
-    pass
-
+# Removed NoteCreate class as it is redundant with NoteBase for creation schema
+# Use NoteBase directly for note creation requests
 
 class NoteUpdate(BaseModel):
     """
@@ -111,7 +104,7 @@ class NoteUpdate(BaseModel):
         """
         if v is not None and not v.strip():
             raise ValueError("Title cannot be empty or whitespace")
-        return v.strip() if v else None
+        return v.strip() if v is not None else None
     
     @validator('content')
     def validate_content(cls, v: Optional[str]) -> Optional[str]:

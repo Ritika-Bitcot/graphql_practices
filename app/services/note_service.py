@@ -23,7 +23,6 @@ class NoteService:
     This class handles all business operations for notes
     following the Single Responsibility Principle.
     """
-    
     def __init__(self, db: Session) -> None:
         """
         Initialize note service.
@@ -34,18 +33,21 @@ class NoteService:
         self.db = db
     
     @classmethod
-    def create_from_session(cls, db: Session) -> "NoteService":
+    def _validate_pagination_params(cls, skip: int, limit: int) -> None:
         """
-        Create NoteService instance from database session.
+        Validate pagination parameters for skip and limit.
         
         Args:
-            db: Database session
-            
-        Returns:
-            NoteService: Service instance
+            skip: Number of records to skip
+            limit: Maximum number of records to return
+        
+        Raises:
+            ValueError: If parameters are invalid
         """
-        return cls(db)
-    
+        if skip < 0:
+            raise ValueError("Skip parameter must be non-negative")
+        if limit < 1 or limit > 100:
+            raise ValueError("Limit parameter must be between 1 and 100")
     def get_by_id(self, note_id: int) -> Optional[Note]:
         """
         Get a note by ID.
@@ -75,9 +77,7 @@ class NoteService:
             
         Returns:
             List[Note]: List of notes
-            
-        Raises:
-            ValueError: If pagination parameters are invalid
+            self._validate_pagination_params(skip, limit)
         """
         try:
             if skip < 0:
@@ -94,7 +94,6 @@ class NoteService:
         except Exception as e:
             logger.error(f"Error getting all notes: {str(e)}")
             raise
-    
     def search(self, query: str, skip: int = 0, limit: int = 10) -> List[Note]:
         """
         Search notes by query string.
@@ -103,21 +102,17 @@ class NoteService:
             query: Search query string
             skip: Number of records to skip
             limit: Maximum number of records to return
-            
+        
         Returns:
             List[Note]: List of matching notes
-            
+        
         Raises:
             ValueError: If search parameters are invalid
         """
         try:
             if not query or not query.strip():
                 raise ValueError("Search query cannot be empty")
-            if skip < 0:
-                raise ValueError("Skip parameter must be non-negative")
-            if limit < 1 or limit > 100:
-                raise ValueError("Limit parameter must be between 1 and 100")
-            
+            self._validate_pagination_params(skip, limit)
             search_term = f"%{query.strip()}%"
             
             return self.db.query(Note).filter(
@@ -132,6 +127,7 @@ class NoteService:
             raise
         except Exception as e:
             logger.error(f"Error searching notes: {str(e)}")
+            raise
             raise
     
     def get_statistics(self) -> Dict[str, Any]:

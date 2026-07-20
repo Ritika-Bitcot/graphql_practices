@@ -10,18 +10,6 @@ from app.graphql.queries import Query
 from app.graphql.mutations import Mutation
 
 
-@strawberry.type
-class Schema:
-    """
-    Root GraphQL schema.
-    
-    This class combines queries and mutations into a single schema
-    for the GraphQL API.
-    """
-    
-    query: Query = strawberry.field(description="Query operations")
-    mutation: Mutation = strawberry.field(description="Mutation operations")
-
 
 # Create the complete schema
 schema = strawberry.Schema(
@@ -33,12 +21,3 @@ schema = strawberry.Schema(
     )
 )
 
-
-def get_schema() -> strawberry.Schema:
-    """
-    Get the GraphQL schema.
-    
-    Returns:
-        strawberry.Schema: The complete GraphQL schema
-    """
-    return schema
