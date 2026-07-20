@@ -72,8 +72,7 @@ class Note(Base):
         Returns:
             str: String representation
         """
-        return f"Note(id={self.id}, title='{self.title}', is_active={self.is_active})"
-    
+        return f"Note(id={self.id}, title='{self.title}')"
     def to_dict(self) -> dict:
         """
         Convert note model to dictionary.
