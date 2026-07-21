@@ -26,11 +26,6 @@ class Settings(BaseSettings):
         env="DATABASE_URL",
         description="PostgreSQL database connection URL"
     )
-    db_host: str = Field(default="localhost", env="DB_HOST", description="Database host")
-    db_port: int = Field(default=5432, env="DB_PORT", description="Database port")
-    db_name: str = Field(default="notes_db", env="DB_NAME", description="Database name")
-    db_user: Optional[str] = Field(default=None, env="DB_USER", description="Database username")
-    db_password: Optional[str] = Field(default=None, env="DB_PASSWORD", description="Database password")
     
     # Application Configuration
     debug: bool = Field(default=False, env="DEBUG", description="Debug mode")
