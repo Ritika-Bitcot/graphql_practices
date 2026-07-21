@@ -109,9 +109,11 @@ class NoteUpdate(BaseModel):
         Returns:
             Optional[str]: Validated title or None
         """
-        if v is not None and not v.strip():
+        if v is None:
+            return None
+        if not v.strip():
             raise ValueError("Title cannot be empty or whitespace")
-        return v.strip() if v else None
+        return v.strip()
     
     @validator('content')
     def validate_content(cls, v: Optional[str]) -> Optional[str]:
@@ -124,9 +126,11 @@ class NoteUpdate(BaseModel):
         Returns:
             Optional[str]: Validated content or None
         """
-        if v is not None and not v.strip():
+        if v is None:
+            return None
+        if not v.strip():
             raise ValueError("Content cannot be empty or whitespace")
-        return v.strip() if v else None
+        return v.strip()
 
 
 class NoteResponse(NoteBase):

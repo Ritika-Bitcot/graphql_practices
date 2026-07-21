@@ -21,21 +21,16 @@ class Settings(BaseSettings):
     """
     
     # Database Configuration
-    database_url: str = Field(
-        default="postgresql://username:password@localhost:5432/notes_db",
+    database_url: Optional[str] = Field(
+        default=None,
         env="DATABASE_URL",
         description="PostgreSQL database connection URL"
     )
-    db_host: str = Field(default="localhost", env="DB_HOST", description="Database host")
-    db_port: int = Field(default=5432, env="DB_PORT", description="Database port")
-    db_name: str = Field(default="notes_db", env="DB_NAME", description="Database name")
-    db_user: str = Field(default="username", env="DB_USER", description="Database username")
-    db_password: str = Field(default="password", env="DB_PASSWORD", description="Database password")
     
     # Application Configuration
     debug: bool = Field(default=False, env="DEBUG", description="Debug mode")
-    secret_key: str = Field(
-        default="your-secret-key-here",
+    secret_key: Optional[str] = Field(
+        default=None,
         env="SECRET_KEY",
         description="Application secret key"
     )

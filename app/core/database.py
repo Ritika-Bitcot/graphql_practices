@@ -44,14 +44,6 @@ def get_database_session() -> Generator[Session, None, None]:
         db.close()
 
 
-def create_tables() -> None:
-    """
-    Create all database tables.
-    
-    This function creates all tables defined in the models.
-    """
-    Base.metadata.create_all(bind=engine)
-
 
 def drop_tables() -> None:
     """
