@@ -244,6 +244,26 @@ class Query:
     for the Note entity.
     """
     
+@type
+class Query:
+    """
+    GraphQL Query schema.
+    
+    This class defines all available GraphQL queries
+    for the Note entity.
+    """
+
+    def __init__(self):
+        self.db_gen = get_db()
+        self.db = next(self.db_gen)
+        self.resolver = NoteQueryResolver(self.db)
+
+    async def close(self):
+        try:
+            self.db.close()
+        finally:
+            self.db_gen.close()
+
     @field
     async def get_note(self, id: int) -> NoteResponse:
         """
@@ -255,17 +275,11 @@ class Query:
         Returns:
             NoteResponse: Response containing the note or error message
         """
-        # Get database session
-        db_gen = get_db()
-        db = next(db_gen)
         try:
-            resolver = NoteQueryResolver(db)
-            return await resolver.get_note(id)
+            return await self.resolver.get_note(id)
         finally:
-            try:
-                db.close()
-            finally:
-                db_gen.close()
+            await self.close()
+
     @field
     async def get_all_notes(
         self, 
@@ -280,15 +294,11 @@ class Query:
         Returns:
             NotesResponse: Response containing list of notes or error message
         """
-        # Get database session
-        db_gen = get_db()
-        db = next(db_gen)
         try:
-            resolver = NoteQueryResolver(db)
-            return await resolver.get_all_notes(pagination)
+            return await self.resolver.get_all_notes(pagination)
         finally:
-            db.close()
-    
+            await self.close()
+
     @field
     async def search_notes(self, search_input: NoteSearchInput) -> NotesResponse:
         """
@@ -300,15 +310,11 @@ class Query:
         Returns:
             NotesResponse: Response containing matching notes or error message
         """
-        # Get database session
-        db_gen = get_db()
-        db = next(db_gen)
         try:
-            resolver = NoteQueryResolver(db)
-            return await resolver.search_notes(search_input)
+            return await self.resolver.search_notes(search_input)
         finally:
-            db.close()
-    
+            await self.close()
+
     @field
     async def get_note_statistics(self) -> StatisticsResponse:
         """
@@ -317,11 +323,7 @@ class Query:
         Returns:
             StatisticsResponse: Response containing statistics or error message
         """
-        # Get database session
-        db_gen = get_db()
-        db = next(db_gen)
         try:
-            resolver = NoteQueryResolver(db)
-            return await resolver.get_note_statistics()
+            return await self.resolver.get_note_statistics()
         finally:
-            db.close()
+            await self.close()
