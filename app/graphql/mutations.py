@@ -229,15 +229,14 @@ class Mutation:
         Returns:
             NoteResponse: Response containing updated note or error message
         """
-        # Get database session
-        db_gen = get_db()
-        db = next(db_gen)
-        # Get database session using context manager style to ensure proper cleanup
         with get_db() as db:
             resolver = NoteMutationResolver(db)
             return await resolver.update_note(note_input)
+    
+    @field
+    async def delete_note(self, delete_input: NoteDeleteInput) -> DeleteResponse:
         """
-        Delete a note (soft delete).
+        Delete a note permanently.
         
         Args:
             delete_input: Note deletion data
@@ -245,15 +244,6 @@ class Mutation:
         Returns:
             DeleteResponse: Response containing deletion result or error message
         """
-        # Get database session
-        db_gen = get_db()
-        db = next(db_gen)
-        try:
-            resolver = NoteMutationResolver(db)
-            return await resolver.delete_note(delete_input)
-        finally:
-            db.close()
-        # Get database session using context manager style to ensure proper cleanup
         with get_db() as db:
             resolver = NoteMutationResolver(db)
             return await resolver.delete_note(delete_input)
