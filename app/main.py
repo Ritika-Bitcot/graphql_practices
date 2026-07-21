@@ -187,8 +187,9 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
     content = {
         "error": "Internal server error",
         "message": "An unexpected error occurred",
-        "type": type(exc).__name__ if settings.debug else None
     }
+    if settings.debug:
+        content["type"] = type(exc).__name__
     return JSONResponse(status_code=500, content=content)
 
 
