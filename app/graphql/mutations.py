@@ -212,26 +212,19 @@ class Mutation:
         Returns:
             NoteResponse: Response containing created note or error message
         """
-    async def create_note(self, note_input: NoteCreateInput) -> NoteResponse:
+        resolver = NoteMutationResolver(next(get_db()))
+        return await resolver.create_note(note_input)
+    @field
+    async def update_note(self, note_input: NoteUpdateInput) -> NoteResponse:
         """
-        Create a new note.
+        Update an existing note.
         
         Args:
-            note_input: Note creation data
+            note_input: Note update data
             
         Returns:
-            NoteResponse: Response containing created note or error message
+            NoteResponse: Response containing updated note or error message
         """
-        from contextlib import closing
-        with closing(get_db()) as db_gen:
-            db = next(db_gen)
-            try:
-                resolver = NoteMutationResolver(db)
-                return await resolver.create_note(note_input)
-            finally:
-                db.close()
-    
-    @field
     async def update_note(self, note_input: NoteUpdateInput) -> NoteResponse:
         """
         Update an existing note.
@@ -245,12 +238,11 @@ class Mutation:
         from contextlib import closing
         with closing(get_db()) as db_gen:
             db = next(db_gen)
+            resolver = NoteMutationResolver(db)
             try:
-                resolver = NoteMutationResolver(db)
                 return await resolver.update_note(note_input)
             finally:
                 db.close()
-    
     @field
     async def delete_note(self, delete_input: NoteDeleteInput) -> DeleteResponse:
         """
