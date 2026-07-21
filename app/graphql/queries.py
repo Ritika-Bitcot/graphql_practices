@@ -262,8 +262,10 @@ class Query:
             resolver = NoteQueryResolver(db)
             return await resolver.get_note(id)
         finally:
-            db.close()
-    
+            try:
+                db.close()
+            finally:
+                db_gen.close()
     @field
     async def get_all_notes(
         self, 
