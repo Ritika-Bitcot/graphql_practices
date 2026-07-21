@@ -203,9 +203,11 @@ class NoteService:
                 return None
             
             if title is not None:
-                note.title = title.strip()
+                if title.strip():
+                    note.title = title.strip()
             if content is not None:
-                note.content = content.strip()
+                if content.strip():
+                    note.content = content.strip()
             
             self.db.commit()
             self.db.refresh(note)
