@@ -167,8 +167,11 @@ async def log_requests(request: Request, call_next) -> Response:
 
 
 # Exception handlers
+from fastapi.responses import JSONResponse
+
+
 @app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception) -> Dict[str, Any]:
+async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """
     Global exception handler.
     
@@ -177,15 +180,16 @@ async def global_exception_handler(request: Request, exc: Exception) -> Dict[str
         exc: Exception that occurred
         
     Returns:
-        Dict[str, Any]: Error response
+        JSONResponse: Error response with appropriate status code
     """
     logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
     
-    return {
+    content = {
         "error": "Internal server error",
         "message": "An unexpected error occurred",
         "type": type(exc).__name__ if settings.debug else None
     }
+    return JSONResponse(status_code=500, content=content)
 
 
 # Run the application
