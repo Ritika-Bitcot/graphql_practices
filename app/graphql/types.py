@@ -15,7 +15,7 @@ class NoteType:
     """
     GraphQL type for Note entity.
     
-    This class defines the GraphQL representation of a note
+ with proper field definitions and descriptions.
     with proper field definitions and descriptions.
     """
     
