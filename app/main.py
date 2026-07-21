@@ -42,7 +42,10 @@ async def lifespan(app: FastAPI) -> None:
     
     try:
         # Create database tables
-        create_tables()
+        # Create database tables asynchronously using thread executor
+        import asyncio
+        loop = asyncio.get_running_loop()
+        await loop.run_in_executor(None, create_tables)
         logger.info("Database tables created successfully")
         
         # Log application info
