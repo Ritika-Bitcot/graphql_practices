@@ -23,15 +23,24 @@ class Schema:
     mutation: Mutation = strawberry.field(description="Mutation operations")
 
 
-# Create the complete schema
-schema = strawberry.Schema(
-    query=Query,
-    mutation=Mutation,
-    config=strawberry.SchemaConfig(
-        auto_camel_case=True,
-        validation_enabled=True
+
+# Create and return the complete schema dynamically
+
+def get_schema() -> strawberry.Schema:
+    """
+    Get the GraphQL schema.
+    
+    Returns:
+        strawberry.Schema: The complete GraphQL schema
+    """
+    return strawberry.Schema(
+        query=Query,
+        mutation=Mutation,
+        config=strawberry.SchemaConfig(
+            auto_camel_case=True,
+            validation_enabled=True
+        )
     )
-)
 
 
 def get_schema() -> strawberry.Schema:
